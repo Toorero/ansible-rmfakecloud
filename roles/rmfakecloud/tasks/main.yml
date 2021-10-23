@@ -1,0 +1,11 @@
+- import_tasks: "{{ role_path }}/tasks/init.yml"
+  tags:
+    - always
+- import_tasks: "{{ role_path }}/tasks/rmfakecloud/setup.yml"
+  tags:
+    - setup-all
+    - setup-rmfakecloud
+- import_tasks: "{{ role_path }}/tasks/apache2/setup.yml"
+  tags:
+    - setup-all
+    - setup-rmfakecloud-apache2

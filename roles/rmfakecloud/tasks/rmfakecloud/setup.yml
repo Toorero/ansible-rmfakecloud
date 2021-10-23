@@ -1,0 +1,5 @@
+- import_tasks: "{{ role_path }}/tasks/rmfakecloud/setup_install.yml"
+  when: rmfakecloud_enabled|bool
+
+- import_tasks: "{{ role_path }}/tasks/rmfakecloud/setup_uninstall.yml"
+  when: "not rmfakecloud_enabled|bool"

@@ -1,0 +1,13 @@
+- name: Ensure systemd reloaded after service change installation
+  service:
+    daemon_reload: yes
+
+- name: Ensure service is restarted
+  when: rmfakecloud_enabled_service and rmfakecloud_service_now
+  service:
+      name: rmfakecloud
+      state: restarted
+      enabled: true
+
+- name: Ensure Apache2 recognizes config changes
+  command: apache2ctl restart
