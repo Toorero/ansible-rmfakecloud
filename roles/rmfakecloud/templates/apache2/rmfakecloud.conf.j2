@@ -20,14 +20,18 @@
 
     # When Upgrade:websocket header is present, redirect to ws
     RewriteCond %{HTTP:Upgrade} =websocket [NC]
-    RewriteRule ^(.*)    ws://127.0.0.1:{{ rmfakecloud_port }}/$1 [P,L]
+    RewriteRule ^(.*)    wss://127.0.0.1:{{ rmfakecloud_port }}/$1 [P,L]
 
     
     # Proxy all remaining traffic to rmfakecloud
     AllowEncodedSlashes NoDecode
+    {% if rmfakecloud_tls_enabled %}
+    ProxyPass / https://127.0.0.1:{{ rmfakecloud_port }}/ nocanon
+    ProxyPassReverse / https://127.0.0.1:{{ rmfakecloud_port }}/
+    {% else %}
     ProxyPass / http://127.0.0.1:{{ rmfakecloud_port }}/ nocanon
     ProxyPassReverse / http://127.0.0.1:{{ rmfakecloud_port }}/
-
+    {% endif %}
     ErrorLog ${APACHE_LOG_DIR}/{{ rmfakecloud_servername }}-error.log
     CustomLog ${APACHE_LOG_DIR}/{{ rmfakecloud_servername }}-access.log combined
     <IfModule security2_module>
