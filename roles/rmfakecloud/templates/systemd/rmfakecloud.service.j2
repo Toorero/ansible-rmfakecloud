@@ -11,7 +11,10 @@ Environment="HOME=/root"
 ExecStartPre=-/usr/bin/env sh -c '/usr/bin/env docker kill rmfakecloud 2>/dev/null'
 ExecStartPre=-/usr/bin/env sh -c '/usr/bin/env docker rm rmfakecloud 2>/dev/null'
 
-ExecStart=/usr/bin/env docker run --rm --name rmfakecloud -p {{ rmfakecloud_port }}:3000 \
+ExecStart=/usr/bin/env docker run --rm --name rmfakecloud -p {{ rmfakecloud_port }}:{{ rmfakecloud_port }} \
+                        {% if rmfakecloud_port != "3000" %}
+                        -e PORT='{{ rmfakecloud_port }}' \
+                        {% endif %}
                         {% if rmfakecloud_jwt_secret_key != "" %}
                         -e JWT_SECRET_KEY='{{ rmfakecloud_jwt_secret_key }}' \
                         {% endif %}

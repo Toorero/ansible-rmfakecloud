@@ -10,8 +10,9 @@ rmfakecloud_enabled_service: true
 rmfakecloud_service_now: rmfakecloud_enabled_service|bool
 
 rmfakecloud_servername: rm.example.com
-rmfakecloud_storage_url: https://{{ rmfakecloud_servername }}:443
 rmfakecloud_port: 3000
+rmfakecloud_storage_url: "https://{{ rmfakecloud_servername }}:{{ rmfakecloud_port }}"
+
 
 rmfakecloud_datadir: "data"
 

@@ -1,38 +1,45 @@
 <VirtualHost *:443>
-	ServerName {{ rmfakecloud_servername }}
+    ServerName {{ rmfakecloud_servername }}
 
-	SSLEngine On
+    SSLEngine On
 
-	# If you manage SSL certificates by yourself, these paths will differ.
-	SSLCertificateFile {{ rmfakecloud_tls_certs_dir }}/{{ rmfakecloud_tls_cert }}
-	SSLCertificateKeyFile {{ rmfakecloud_tls_certs_dir }}/{{ rmfakecloud_tls_cert_key }}
+    # If you manage SSL certificates by yourself, these paths will differ.
+    SSLCertificateFile {{ rmfakecloud_tls_certs_dir }}/{{ rmfakecloud_tls_cert }}
+    SSLCertificateKeyFile {{ rmfakecloud_tls_certs_dir }}/{{ rmfakecloud_tls_cert_key }}
 
-	SSLProxyEngine on
-	SSLProxyProtocol +TLSv1.2 +TLSv1.3
-	SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
+    SSLProxyEngine on
+    SSLProxyProtocol +TLSv1.2 +TLSv1.3
+    SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
 
-	ProxyPreserveHost On
-	ProxyRequests Off
-	ProxyVia On
-	RequestHeader set "X-Forwarded-Proto" expr=%{REQUEST_SCHEME}
+    ProxyPreserveHost On
+    ProxyRequests Off
+    ProxyVia On
+    RequestHeader set "X-Forwarded-Proto" expr=%{REQUEST_SCHEME}
 
-	# Proxy all remaining traffic to rmfakecloud
-	AllowEncodedSlashes NoDecode
-	ProxyPass / http://127.0.0.1:{{ rmfakecloud_port }}/ nocanon
-	ProxyPassReverse / http://127.0.0.1:{{ rmfakecloud_port }}/
+    RewriteEngine On
 
-	ErrorLog ${APACHE_LOG_DIR}/{{ rmfakecloud_servername }}-error.log
-	CustomLog ${APACHE_LOG_DIR}/{{ rmfakecloud_servername }}-access.log combined
-	<IfModule security2_module>
-		SecRuleEngine off
-	</IfModule>
+    # When Upgrade:websocket header is present, redirect to ws
+    RewriteCond %{HTTP:Upgrade} =websocket [NC]
+    RewriteRule ^(.*)    ws://127.0.0.1:{{ rmfakecloud_port }}/$1 [P,L]
+
+    
+    # Proxy all remaining traffic to rmfakecloud
+    AllowEncodedSlashes NoDecode
+    ProxyPass / http://127.0.0.1:{{ rmfakecloud_port }}/ nocanon
+    ProxyPassReverse / http://127.0.0.1:{{ rmfakecloud_port }}/
+
+    ErrorLog ${APACHE_LOG_DIR}/{{ rmfakecloud_servername }}-error.log
+    CustomLog ${APACHE_LOG_DIR}/{{ rmfakecloud_servername }}-access.log combined
+    <IfModule security2_module>
+        SecRuleEngine off
+    </IfModule>
 </VirtualHost>
 
 <VirtualHost *:80>
-	ServerName {{ rmfakecloud_servername }}	
+    ServerName {{ rmfakecloud_servername }}	
 
-	Redirect permanent / "https://{{ rmfakecloud_servername }}"
-	
-	ErrorLog ${APACHE_LOG_DIR}/{{ rmfakecloud_servername }}-error.log
-	CustomLog ${APACHE_LOG_DIR}/{{ rmfakecloud_servername }}-access.log combined
-</VirtualHost>
+    Redirect permanent / "https://{{ rmfakecloud_servername }}"
+
+    ErrorLog ${APACHE_LOG_DIR}/{{ rmfakecloud_servername }}-error.log
+    CustomLog ${APACHE_LOG_DIR}/{{ rmfakecloud_servername }}-access.log combined
+    </VirtualHost>
