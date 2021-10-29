@@ -16,21 +16,27 @@
     ProxyVia On
     RequestHeader set "X-Forwarded-Proto" expr=%{REQUEST_SCHEME}
 
-    RewriteEngine On
-
+    
     # When Upgrade:websocket header is present, redirect to ws
+    RewriteEngine On
     RewriteCond %{HTTP:Upgrade} =websocket [NC]
-    RewriteRule ^(.*)    wss://127.0.0.1:{{ rmfakecloud_port }}/$1 [P,L]
+    RewriteCond ${HTTP:Connection} upgrade [NC]
+    {% if rmfakecloud_tls_enabled %}
+    RewriteRule .*  "wss://localhost:{{ rmfakecloud_port }}/$1" [P,L]
+    {% else %}
+    RewriteRule .*  "ws://localhost:{{ rmfakecloud_port }}/$1" [P,L]
+    {% endif %}
+    
 
     
     # Proxy all remaining traffic to rmfakecloud
     AllowEncodedSlashes NoDecode
     {% if rmfakecloud_tls_enabled %}
-    ProxyPass / https://127.0.0.1:{{ rmfakecloud_port }}/ nocanon
-    ProxyPassReverse / https://127.0.0.1:{{ rmfakecloud_port }}/
+    ProxyPass / https://localhost:{{ rmfakecloud_port }}/ nocanon
+    ProxyPassReverse / https://localhost:{{ rmfakecloud_port }}/
     {% else %}
-    ProxyPass / http://127.0.0.1:{{ rmfakecloud_port }}/ nocanon
-    ProxyPassReverse / http://127.0.0.1:{{ rmfakecloud_port }}/
+    ProxyPass / http://localhost:{{ rmfakecloud_port }}/ nocanon
+    ProxyPassReverse / http://localhost:{{ rmfakecloud_port }}/
     {% endif %}
     ErrorLog ${APACHE_LOG_DIR}/{{ rmfakecloud_servername }}-error.log
     CustomLog ${APACHE_LOG_DIR}/{{ rmfakecloud_servername }}-access.log combined
