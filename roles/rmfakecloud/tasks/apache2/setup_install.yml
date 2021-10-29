@@ -31,6 +31,9 @@
     mode: 0644
   notify: Ensure Apache2 recognizes config changes
 
+- name: Flush handlers
+  meta: flush_handlers
+
 - name: Ensure rmfakecloud is accesable from host
   local_action:
     module: uri

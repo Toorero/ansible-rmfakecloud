@@ -39,7 +39,7 @@ ExecStart=/usr/bin/env docker run --rm --name rmfakecloud -p {{ rmfakecloud_port
                          -e LOGLEVEL='{{ rmfakecloud_log_level }}' \
                         {% endif %}
                         {% if rmfakecloud_tls_enabled %}
-                        -e TLS_CERT_KEY='/certs/{{ rmfakecloud_tls_cert_key }}' \
+                        -e TLS_KEY='/certs/{{ rmfakecloud_tls_cert_key }}' \
                         -e TLS_CERT='/certs/{{ rmfakecloud_tls_cert }}' \
                         -v "{{ rmfakecloud_tls_certs_dir }}:/certs:ro" \
                         {% endif %}

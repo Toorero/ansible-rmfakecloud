@@ -22,10 +22,11 @@ rmfakecloud_log_level: ""
 rmfakecloud_log_dir: "/var/log"
 
 rmfakecloud_tls_enabled: true
-rmfakecloud_tls_certs_dir: "/etc/letsencrypt/live/{{ rmfakecloud_servername }}"
+# https://stackoverflow.com/questions/38485607/mount-host-directory-with-a-symbolic-link-inside-in-docker-container
+rmfakecloud_tls_certs_dir: "/etc/letsencrypt/archive/{{ rmfakecloud_servername }}"
 # files relative to the certs_dir
-rmfakecloud_tls_cert_key: "privkey.pem"
-rmfakecloud_tls_cert: "fullchain.pem"
+rmfakecloud_tls_cert_key: "privkey1.pem"
+rmfakecloud_tls_cert: "fullchain1.pem"
 
 rmfakecloud_smtp_server: ""
 rmfakecloud_smtp_username: ""
