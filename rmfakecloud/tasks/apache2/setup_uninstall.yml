@@ -1,0 +1,8 @@
+- name: Ensure rmfakecloud.conf is purged
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ rmfakecloud_apache2_path }}/sites-enabled/rmfakecloud.conf"
+    - "{{ rmfakecloud_apache2_path }}/sites-available/rmfakecloud.conf"
+  notify: Ensure Apache2 recognizes config changes

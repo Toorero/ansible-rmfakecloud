@@ -1,0 +1,62 @@
+[Unit]
+Description=rmfakecloud server
+
+Requires=docker.service
+After=docker.service
+
+
+[Service]
+Type=simple
+Environment="HOME=/root"
+ExecStartPre=-/usr/bin/env sh -c '/usr/bin/env docker kill rmfakecloud 2>/dev/null'
+ExecStartPre=-/usr/bin/env sh -c '/usr/bin/env docker rm rmfakecloud 2>/dev/null'
+
+ExecStart=/usr/bin/env docker run --rm --name rmfakecloud -p {{ rmfakecloud_port }}:{{ rmfakecloud_port }} \
+                        {% if rmfakecloud_port != "3000" %}
+                        -e PORT='{{ rmfakecloud_port }}' \
+                        {% endif %}
+                        {% if rmfakecloud_jwt_secret_key != "" %}
+                        -e JWT_SECRET_KEY='{{ rmfakecloud_jwt_secret_key }}' \
+                        {% endif %}
+                        {% if rmfakecloud_storage_url != "" %}
+                        -e STORAGE_URL='{{ rmfakecloud_storage_url }}' \
+                        {% endif %}
+                        {% if rmfakecloud_smtp_server != "" %}
+                        -e SMTP_SERVER='{{ rmfakecloud_smtp_server }}' \
+                        -e SMTP_USERNAME='{{ rmfakecloud_smtp_username }}' \
+                        -e SMTP_PASSWORD='{{ rmfakecloud_smtp_password }}' \
+                        {% endif %}
+                        {% if rmfakecloud_smtp_insecure_tls %}
+                        -e SMTP_INSECURE_TLS=true \
+                        {% endif %}
+                        {% if rmfakecloud_smtp_helo != "" %}
+                        -e SMTP_HELO='{{ rmfakecloud_smtp_helo }}' \
+                        {% endif %}
+                        {% if rmfakecloud_smtp_from != "" %}
+                         -e SMTP_FROM='{{ rmfakecloud_smtp_from }}' \
+                        {% endif %}
+                        {% if rmfakecloud_log_level != "" %}
+                         -e LOGLEVEL='{{ rmfakecloud_log_level }}' \
+                        {% endif %}
+                        {% if rmfakecloud_tls_enabled %}
+                        -e TLS_KEY='/certs/{{ rmfakecloud_tls_cert_key }}' \
+                        -e TLS_CERT='/certs/{{ rmfakecloud_tls_cert }}' \
+                        -v "{{ rmfakecloud_tls_certs_dir }}:/certs:ro" \
+                        {% endif %}
+                        {% if rmfakecloud_log_enabled %}
+                        -e RM_LOGFILE='/rmfakecloudlog/{{ rmfakecloud_log_file }}' \
+                        -v "{{ rmfakecloud_log_dir }}:/rmfakecloudlog" \
+                        {% endif %}
+                        -v "{{ rmfakecloud_data_path }}:/data" \
+                        {{ rmfakecloud_docker_image }}
+			
+
+ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker kill rmfakecloud 2>/dev/null'
+ExecStop=-/usr/bin/env sh -c '/usr/bin/env docker rm rmfakecloud 2>/dev/null'
+
+Restart=always
+RestartSec=30
+SyslogIdentifier=rmfakecloud
+
+[Install]
+WantedBy=multi-user.target

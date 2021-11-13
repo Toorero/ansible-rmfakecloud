@@ -1,0 +1,51 @@
+# whether to rmfakecloud is installed or not installed
+rmfakecloud_enabled: true
+rmfakecloud_apache_reverse_enabled: true
+rmfakecloud_apache_timeout: 30
+
+rmfakecloud_user_username: rmfakecloud
+rmfakecloud_user_groupname: rmfakecloud
+
+rmfakecloud_enabled_service: true
+rmfakecloud_service_now: rmfakecloud_enabled_service|bool
+
+rmfakecloud_servername: rm.example.com
+rmfakecloud_port: 3000
+rmfakecloud_storage_url: "https://{{ rmfakecloud_servername }}:{{ '443' if rmfakecloud_apache_reverse_enabled else rmfakecloud_port}}"
+
+
+rmfakecloud_datadir: "data"
+
+rmfakecloud_log_enabled: true
+rmfakecloud_log_file: "rmfakecloud.log"
+rmfakecloud_log_level: ""
+rmfakecloud_log_dir: "/var/log"
+
+rmfakecloud_tls_enabled: true
+# https://stackoverflow.com/questions/38485607/mount-host-directory-with-a-symbolic-link-inside-in-docker-container
+rmfakecloud_tls_certs_dir: "/etc/letsencrypt/archive/{{ rmfakecloud_servername }}"
+# files relative to the certs_dir
+rmfakecloud_tls_cert_key: "privkey1.pem"
+rmfakecloud_tls_cert: "fullchain1.pem"
+
+rmfakecloud_smtp_server: ""
+rmfakecloud_smtp_username: ""
+rmfakecloud_smtp_password: ""
+rmfakecloud_smtp_insecure_tls: false
+rmfakecloud_smtp_helo: ""
+rmfakecloud_smtp_from: ""
+
+rmfakecloud_rmapi_hwr_applicationkey: ""
+rmfakecloud_rmapi_hwr_hmac: ""
+
+rmfakecloud_docker_image_self_build: false
+rmfakecloud_docker_image_self_build_repo: "https://github.com/ddvk/rmfakecloud"
+rmfakecloud_docker_image: "ddvk/rmfakecloud"
+rmfakecloud_docker_image_force_pull: false
+
+rmfakecloud_systemd_path: "/etc/systemd/system"
+rmfakecloud_apache2_path: "/etc/apache2"
+
+rmfakecloud_base_path: "/rmfakecloud"
+rmfakecloud_docker_src_files_path: "{{ rmfakecloud_base_path }}/docker-src"
+rmfakecloud_data_path: "{{ rmfakecloud_base_path }}/data"
