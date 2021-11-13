@@ -1,5 +1,0 @@
-- import_tasks: "{{ role_path }}/tasks/apache2/setup_install.yml"
-  when: rmfakecloud_apache_reverse_enabled
-
-- import_tasks: "{{ role_path }}/tasks/apache2/setup_uninstall.yml"
-  when: not rmfakecloud_apache_reverse_enabled

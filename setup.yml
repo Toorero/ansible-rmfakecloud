@@ -1,7 +1,0 @@
----
-- name: "Set up a rmfakecloud"
-  hosts: "{{ target if target is defined else 'rmfakecloud_servers' }}"
-  become: true
-
-  roles:
-    - rmfakecloud
